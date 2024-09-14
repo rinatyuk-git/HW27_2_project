@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "hw24-1-project"
+name = "hw24-2-project"
 version = "0.1.0"
 description = ""
 authors = ["rinatyuk-git <17_ufo_RB@proton.me>"]
@@ -7,11 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+django = "^5.1.1"
 django-admin = "^2.0.2"
 psycopg2-binary = "^2.9.9"
 pillow = "^10.4.0"
 djangorestframework = "^3.15.2"
-
+python-dotenv = "^1.0.1"
+django-filter = "^24.3"
 
 [build-system]
 requires = ["poetry-core"]

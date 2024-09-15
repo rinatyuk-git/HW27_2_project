@@ -30,7 +30,6 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    # serializer_class = CourseSerializer
     queryset = Course.objects.all()
 
     def get_serializer_class(self):

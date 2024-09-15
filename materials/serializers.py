@@ -11,8 +11,6 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    # lessons_qty = serializers.SerializerMethodField()
-    # lessons_show = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -21,7 +19,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class CourseDetailSerializer(serializers.ModelSerializer):
     lessons_qty = serializers.SerializerMethodField()
-    lessons_show = serializers.SerializerMethodField()
+    lessons_show = LessonSerializer(source='lesson_set', many=True)
 
     def get_lessons_qty(self, instance):
         if instance.lesson_set.all().count():

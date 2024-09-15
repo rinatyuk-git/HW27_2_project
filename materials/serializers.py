@@ -11,12 +11,17 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    lessons_qty = serializers.SerializerMethodField()
-    lessons_show = serializers.SerializerMethodField()
+    # lessons_qty = serializers.SerializerMethodField()
+    # lessons_show = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class CourseDetailSerializer(serializers.ModelSerializer):
+    lessons_qty = serializers.SerializerMethodField()
+    lessons_show = serializers.SerializerMethodField()
 
     def get_lessons_qty(self, instance):
         if instance.lesson_set.all().count():
@@ -25,3 +30,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_lessons_show(self, course):
         return [lesson.lesson_name for lesson in Lesson.objects.filter(course=course)]
+
+    class Meta:
+        model = Course
+        fields = ("course_name", "course_description", "lessons_qty", "lessons_show",)

@@ -2,7 +2,7 @@ from rest_framework import viewsets, generics
 
 from materials.models import Course, Lesson
 from materials.serializers import (CourseSerializer, LessonSerializer,
-                                   # CourseDetailSerializer
+                                   CourseDetailSerializer
                                    )
 
 
@@ -30,5 +30,10 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    serializer_class = CourseSerializer
+    # serializer_class = CourseSerializer
     queryset = Course.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CourseDetailSerializer
+        return CourseSerializer

@@ -1,21 +1,7 @@
-"""
-Курс:
-название,
-превью (картинка),
-описание.
-
-Урок:
-название,
-описание,
-превью (картинка),
-ссылка на видео.
-
-Урок и курс - это связанные между собой сущности.
-Уроки складываются в курс, в одном курсе может быть много уроков.
-Реализуйте связь между ними.
-
-"""
 from django.db import models
+
+from config import settings
+
 NULLABLE = {"blank": True, "null": True}
 
 
@@ -34,6 +20,13 @@ class Course(models.Model):
         verbose_name="Информация о курсе",
         **NULLABLE,
     )  # Описание курса
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Создатель",
+        help_text="Укажите Создателя курса",
+        **NULLABLE,
+    )  # поле владельца
 
     def __str__(self):
         return f'{self.course_name}'
@@ -69,6 +62,13 @@ class Lesson(models.Model):
         help_text="Укажите курс",
         **NULLABLE,
     )  # Уроки складываются в курс, в одном курсе может быть много уроков.
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Создатель",
+        help_text="Укажите Создателя урока",
+        **NULLABLE,
+    )  # поле владельца
     
     def __str__(self):
         return f'{self.lesson_name}'

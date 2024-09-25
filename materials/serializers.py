@@ -1,16 +1,27 @@
 from rest_framework import serializers
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.validators import (
+    # UrlLessonValidator,
+    validate_lesson_url)
 
 
 class LessonSerializer(serializers.ModelSerializer):
+    lesson_video = serializers.CharField(validators=[validate_lesson_url])
 
     class Meta:
         model = Lesson
         fields = "__all__"
+        # validators = [UrlLessonValidator(field='lesson_video')]
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+
+    def get_is_subscribed(self, instance):
+        return Subscription.objects.filter(
+            user=self.context['request'].user,
+            course_name=instance.pk).exists()
 
     class Meta:
         model = Course
@@ -32,3 +43,10 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ("course_name", "course_description", "lessons_qty", "lessons_show",)
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscription
+        fields = "__all__"

@@ -14,8 +14,8 @@ from users.views import (
     UserRetrieveAPIView,
     UserUpdateAPIView,
     UserDestroyAPIView,
-    PaymentsListAPIView,
-    )
+    PaymentsListAPIView, PaymentsCreateAPIView,
+)
 
 app_name = UsersConfig.name
 
@@ -32,6 +32,7 @@ urlpatterns = [
     path('users/login/', TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='login'),
     path('users/token/refresh/', TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
     path('payments/', PaymentsListAPIView.as_view(), name='payments_list'),
+    path('payment/', PaymentsCreateAPIView.as_view(), name='do_payment'),
 ]
 
 # urlpatterns += router.urls

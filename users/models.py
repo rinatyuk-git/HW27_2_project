@@ -76,3 +76,23 @@ class Payments(models.Model):
         choices=PAYMENT_CHOICES,
         default="BANK",
     )  # способ оплаты
+    payment_session_id = models.CharField(
+        max_length=255,
+        verbose_name='ID сессии',
+        help_text='Укажите ID сессии',
+        blank=True,
+        null=True,
+    )  # ID сессии
+    payment_link = models.URLField(
+        max_length=2000,
+        verbose_name="Ссылка для оплаты",
+        blank=True,
+        null=True,
+    )  # ссылка для оплаты
+
+    class Meta:
+        verbose_name = "Оплата"
+        verbose_name_plural = "Оплаты"
+
+    def __str__(self):
+        return str(self.paid_amount)

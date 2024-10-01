@@ -5,12 +5,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from users.models import User, Payments
 from users.serializers import UserSerializer, PaymentsSerializer
+from users.services import convert_base_to_eur, create_stripe_price, create_stripe_session
 
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     serializer_class = UserSerializer
-#     queryset = User.objects.all()
-#     fields = ("email", "phone", "city", "avatar", )
 
 class UserCreateAPIView(generics.CreateAPIView):
     serializer_class = UserSerializer
@@ -50,3 +46,23 @@ class PaymentsListAPIView(generics.ListAPIView):
     filterset_fields = ("paid_lesson", "paid_course", "payment_method")
     ordering_fields = ('payment_date',)
     permission_classes = [IsAuthenticated]
+
+
+class PaymentsCreateAPIView(generics.CreateAPIView):
+    serializer_class = PaymentsSerializer
+    queryset = Payments.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        amount_in_eur = convert_base_to_eur(payment.paid_amount)
+        paid_product = []
+        if name := payment.paid_course.course_name:
+            paid_product.append(name)
+        if name := payment.paid_lesson.lesson_name:
+            paid_product.append(name)
+        paid_product = ', '.join(paid_product)
+        price = create_stripe_price(amount_in_eur, paid_product)
+        payment_session_id, payment_link = create_stripe_session(price)
+        payment.payment_session_id = payment_session_id
+        payment.payment_link = payment_link
+        payment.save()

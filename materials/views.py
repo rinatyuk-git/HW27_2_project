@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -54,6 +56,9 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [~IsModerator | IsOwner]
 
 
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="description from swagger_auto_schema via method_decorator"
+))
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     pagination_class = PagePaginator

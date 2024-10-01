@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'drf_yasg',
 
     'users',
     'materials',
@@ -109,6 +110,9 @@ DATABASES = {
     }
 }
 
+STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+CURRENCY_API_KEY = os.getenv('CURRENCY_API_KEY')
+BASE_CUR = os.getenv('BASE_CUR')
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -160,6 +164,6 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1005),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)
 }

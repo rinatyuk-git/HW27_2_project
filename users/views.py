@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from users.models import User, Payments
 from users.serializers import UserSerializer, PaymentsSerializer
-from users.services import convert_base_to_eur, create_stripe_price, create_stripe_session
+from users.services import convert_base_to_eur, create_stripe_price, create_stripe_session, create_stripe_product
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -55,13 +55,15 @@ class PaymentsCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         payment = serializer.save(user=self.request.user)
         amount_in_eur = convert_base_to_eur(payment.paid_amount)
-        paid_product = []
-        if name := payment.paid_course.course_name:
-            paid_product.append(name)
-        if name := payment.paid_lesson.lesson_name:
-            paid_product.append(name)
-        paid_product = ', '.join(paid_product)
-        price = create_stripe_price(amount_in_eur, paid_product)
+        # paid_product = []
+        # if name := payment.paid_course.course_name:
+        #     paid_product.append(name)
+        # if name := payment.paid_lesson.lesson_name:
+        #     paid_product.append(name)
+        # paid_product = ', '.join(name)
+        # product = create_stripe_product(paid_product)
+        product = create_stripe_product(payment.paid_course.course_name)
+        price = create_stripe_price(amount_in_eur, product)
         payment_session_id, payment_link = create_stripe_session(price)
         payment.payment_session_id = payment_session_id
         payment.payment_link = payment_link

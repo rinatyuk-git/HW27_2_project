@@ -1,7 +1,5 @@
-import requests
 import stripe
 import currencyapicom
-from rest_framework import status
 
 from config.settings import STRIPE_API_KEY, CURRENCY_API_KEY, BASE_CUR
 

@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -10,6 +11,7 @@ from materials.paginators import PagePaginator
 from materials.serializers import (CourseSerializer, LessonSerializer,
                                    CourseDetailSerializer, SubscriptionSerializer
                                    )
+from materials.tasks import course_updated_message
 from users.permissions import (
     IsOwner,
     IsModerator
@@ -75,12 +77,17 @@ class CourseViewSet(viewsets.ModelViewSet):
             return CourseDetailSerializer
         return CourseSerializer
 
-    def perform_create(self, serializer):
+    def perform_create(self, serializer):  # Присвоение Создателя курса
         new_course = serializer.save()
         new_course.owner = self.request.user
         new_course.save()
 
-    def get_permissions(self):
+    def perform_update(self, serializer):  # Переопределение обновления курса
+        upd_course = serializer.save()
+        course_updated_message.delay(upd_course.id)
+        upd_course.save()
+
+    def get_permissions(self):  # Распределение доступов
         if self.action == "create":
             self.permission_classes = (~IsModerator,)
         elif self.action in ["update", "retrieve"]:
